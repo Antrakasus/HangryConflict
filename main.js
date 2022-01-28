@@ -1,0 +1,3 @@
+function angy(){
+    alert("Hangry")
+}
