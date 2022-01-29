@@ -12,4 +12,7 @@ function angy(req, res){
     if(req.method=="POST"){
         res = req.ip;
     }
+    if(req.method=="GET"){
+        res.render("index");
+    }
 }
