@@ -3,7 +3,7 @@ var app = express();
 
 app.set("view engine", "ejs");
 
-app.all("", angy);
+app.get("/", angy);
 
 app.listen(process.env.PORT || 5000)
 console.log("Listening")
