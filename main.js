@@ -15,4 +15,5 @@ function angy(req, res){
     if(req.method=="GET"){
         res.render("index");
     }
+    console.log(req.path)
 }
