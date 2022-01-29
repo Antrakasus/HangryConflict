@@ -11,9 +11,17 @@ console.log("Listening")
 function angy(req, res){
     if(req.method=="POST"){
         res = req.ip;
-    }
-    if(req.method=="GET"){
-        res.render("index");
+    }else if(req.method=="GET"){
+        if(req.path=="/"){
+            res.render("index")
+        }
+        else if(req.body.want=="ip"){
+            res.set("Content-Type", "text/plain")
+            res.send(req.ip)
+        }
+        else{
+            res.sendFile(req.path)
+        }
     }
     console.log(req.path)
 }
