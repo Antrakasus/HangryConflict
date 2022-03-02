@@ -1,0 +1,17 @@
+.chill{
+    
+}
+.chill:hover{
+    --color:0;
+}
+a{
+    color:rgb(50,100,var(--color,200));
+    text-decoration: none;
+    font-family: "Brush Script MT", cursive;
+    width: auto;
+    margin:10px;
+    padding: 10px;
+    border-radius: 999px;
+    background: #bbf;
+    display: inline-block;
+}

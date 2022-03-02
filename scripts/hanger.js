@@ -1,136 +1,123 @@
-var can;
-var ctx;
-var objects = [];
-var toDraw = [];
-var fr = 60;
-var heightmul = 0.8;
-var widthmul = 0.8;
-var time = performance.now();
-var frametime = 0;
-var clear = true;
-delta = fps = 0;
+var widthFill = 0.5;
+var heightFill = 0.5;
 
-class object{
-    constructor(){
-        this.body = new shape("rgb(0,0,0,0)",true,
-        new point(10,-10), new point(0,10), new point(-10,-10))
-        this.x = 100;
-        this.y = 100;
-        this.xs = 0;
-        this.ys = 0;
-        toDraw.push(this.body);
-    }
-    step(){
-        this.x += this.xs;
-        this.y += this.ys;
-        if(this.x<20||this.x>can.width-20){
-            this.xs *=-1;
-            if(this.x<20){
-                this.x = 20;
-            }else{
-                this.x = can.width-20;
-            }
-        }
-        if(this.y<20||this.y>can.height-20){
-            this.ys *=-1;
-            if(this.y<20){
-                this.y = 20;
-            }else{
-                this.y = can.height-20;
-            }
-        }
-        for(let x=0;x<this.body.points.length;x++){
-            let spot = this.body.points[x];
-            spot.x = this.x+spot.ox;
-            spot.y = this.y+spot.oy;
-        }
-    }
+var vs =
+[
+    "precision mediump float;",
+    "",
+    "attribute vec2 vertPosition;",
+    "attribute vec3 vertColor;",
+    "varying vec3 fragColor;",
+    "",
+    "void main()",
+    "{",
+    "fragColor = vertColor;",
+    "gl_Position = vec4(vertPosition, 0.0, 1.0);",
+    "}"
+].join("\n");
 
-}
+var fs =
+[
+    "precision mediump float;",
+    "",
+    "varying vec3 fragColor;",
+    "void main()",
+    "{",
+    "gl_FragColor = vec4(fragColor, 1.0);",
+    "}"
+].join("\n");
 
-class point{
-    constructor(ox, oy) {
-        this.x = 0;
-        this.y = 0;
-        this.ox = ox;
-        this.oy = oy;
-    }
-}
+const floatSize = Float32Array.BYTES_PER_ELEMENT;
 
-class shape{
-    constructor(color, filled, ...args) {
-        this.color = color;
-        this.filled = filled;
-        this.points = args;
-    }
-}
+
+
 
 function load(){
-    can = document.getElementById("can't");
-    can.width = window.innerWidth*widthmul;
-    can.height = window.innerHeight*heightmul;
-    if (can.getContext) {
-        ctx = can.getContext('2d');
-        stuff();
-        }else{
-        can.innerHTML = "Your device can't support canvases, broke boi";
+    var can = document.getElementById("can't");
+    var gl = can.getContext("webgl");
+
+    if(!gl){
+        alert("Din webläsare kan inte hantera webgls kraft, weakling!");
+        window.stop();
+    }
+    window.onresize = function(){
+        can.width = window.innerWidth* widthFill;
+        can.height = window.innerHeight* heightFill;
+        gl.viewport(0,0,can.width,can.height);
     }
 
-    function stuff(){
-        window.onresize = function(){
-        can.width = window.innerWidth*widthmul;
-        can.height = window.innerHeight*heightmul}
-        window.requestAnimationFrame(frame);
-    }
-}
-
-function buildthing(){
-    let thing = new object();
-    thing.xs = (Math.random()-0.5)*10;
-    thing.ys = (Math.random()-0.5)*10;
-    thing.body.color = "rgb("+Math.random()*255+","+Math.random()*255+","+Math.random()*255+",0.2)";
-    objects[i] = thing;
-}
-
-function frame(){
-    delta = performance.now() - time;
-    time = performance.now();
-    fps *= 0.95;
-    fps += 50/Math.max(delta,0.1);
-    for(i=0;i<objects.length;i++){
-        objects[i].step();
-    }
-    draw();
-    window.requestAnimationFrame(frame); 
-}
-
-function draw(){
-    if(clear){
-        ctx.clearRect(0, 0, can.width, can.height)
-    }
+    can.width = window.innerWidth* widthFill;
+    can.height = window.innerHeight* heightFill;
+    gl.viewport(0,0,can.width,can.height);
+    gl.clearColor(0.5,0.2,0.8,0.75)
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
-    for(let i=0; i<toDraw.length;i++){
-        let sh = toDraw[i];
-        ctx.beginPath();
-        ctx.fillStyle = sh.color;
-        ctx.moveTo(sh.points[0].x, sh.points[0].y);
-        for(let x=1; x<sh.points.length;x++){
-            ctx.lineTo(sh.points[x].x, sh.points[x].y);
-        }
-        ctx.closePath();
-        if(sh.filled){
-            ctx.fill();
-        }else{  
-            ctx.stroke();
-        }
+    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    
+    gl.shaderSource(vertexShader, vs);
+    gl.shaderSource(fragmentShader, fs);
+    
+    gl.compileShader(vertexShader);
+    if(!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)){
+        console.error("ERROR compiling vertex shader!", gl.getShaderInfoLog(vertexShader));
+        return;
     }
-    frametime = performance.now()-time
-    for(let y= 0; y<(10-frametime)*10;y++){
-        buildthing();
+    gl.compileShader(fragmentShader);
+    if(!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)){
+        console.error("ERROR compiling fragment shader!", gl.getShaderInfoLog(fragmentShader));
+        return;
     }
-    ctx.font = "20px Verdana";
-    ctx.fillStyle = "rgb(0,0,255,0.8)";
-    ctx.fillText("Frametime: "+frametime, 10, 20);
-    ctx.fillText("Fps: "+Math.round(fps), 10, 40);
-    ctx.fillText("Things: "+toDraw.length, 10, 60);
+
+    var program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if(!gl.getProgramParameter(program, gl.LINK_STATUS)){
+        console.error("Error linking program!", gl.getProgramInfoLog(program));
+        return;
+    }
+    gl.validateProgram(program);
+    if(!gl.getProgramParameter(program,gl.VALIDATE_STATUS)){
+        console.error("Error validating program", gl.getProgramInfoLog(program));
+        return;
+    }
+
+    var triangleVertices = 
+    [
+        0.0, 0.5, 1.0, 1.0, 0.0,
+        -0.5, -0.5, 0.7, 0.0, 1.0,
+        0.5, -0.5,  0.1, 1.0, 0.6
+    ];
+
+    var triangleVertexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
+
+    var positionAttribLocation = gl.getAttribLocation(program, "vertPosition");
+    var colorAttribLocation = gl.getAttribLocation(program, "vertColor");
+    gl.vertexAttribPointer(
+        positionAttribLocation, // Atribute location
+        2, // Number of elements per attribute
+        gl.FLOAT, // Type of elements
+        gl.FALSE, // Is normalised?
+        5*Float32Array.BYTES_PER_ELEMENT,// Size of an individual vertex
+        0// Offset from the begining
+    )
+
+    gl.vertexAttribPointer(
+        colorAttribLocation, // Atribute location
+        3, // Number of elements per attribute
+        gl.FLOAT, // Type of elements
+        gl.FALSE, // Is normalised?
+        5*floatSize, // Size of an individual vertex
+        2*floatSize // Offset from the begining of a single vertex
+    )
+
+    gl.enableVertexAttribArray(positionAttribLocation);
+    gl.enableVertexAttribArray(colorAttribLocation);
+
+    gl.useProgram(program);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
+
