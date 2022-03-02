@@ -1,0 +1,15 @@
+canvas{
+  margin:5%;
+  background: rgb(255,255,255)
+}
+.click{
+  color:black;
+  font-size:120%;
+  position: absolute;
+  top:40%;
+  left: 40%;
+  background: rgba(0,255,255,0.3);
+  padding: 1%;
+  border-radius: 99px;
+  text-decoration: none;
+}

@@ -25,8 +25,8 @@ class object{
     constructor(){
         this.body = new shape("rgb(0,0,0,0)",true,
         new point(10,-10), new point(0,10), new point(-10,-10))
-        this.x = 100;
-        this.y = 100;
+        this.x = can.width/2;
+        this.y = can.height/2;
         this.xs = 0;
         this.ys = 0;
         toDraw.push(this.body);
@@ -56,6 +56,12 @@ class object{
             let spot = this.body.points[x];
             spot.x = this.x+spot.ox;
             spot.y = this.y+spot.oy;
+        }
+        if(Math.abs(this.xs)>100){
+            this.xs *=0.05;
+        }
+        if(Math.abs(this.ys)>100){
+            this.ys *=0.05;
         }
     }
 
@@ -93,7 +99,6 @@ function load(){
         window.onresize = function(){
         can.width = window.innerWidth*widthmul;
         can.height = window.innerHeight*heightmul}
-        window.requestAnimationFrame(frame);
     }
 }
 
@@ -123,6 +128,11 @@ function frame(){
     draw();
     frames++;
     window.requestAnimationFrame(frame); 
+}
+
+function start(){
+    document.getElementsByClassName("click")[0].hidden = true;
+    frame();
 }
 
 function draw(){
