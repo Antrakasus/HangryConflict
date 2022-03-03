@@ -3,7 +3,7 @@ var req = new XMLHttpRequest();
 function response(){
     console.log(req.status);
     console.log(req.responseText);
-    if(req.status==4){
+    if(req.status==200){
         ipp.innerHTML = "Your ip is: "+req.responseText.split(":")[3];
     }
 
