@@ -3,8 +3,6 @@ var ctx;
 var objects = [];
 var toDraw = [];
 var fr = 60;
-var heightmul = 0.8;
-var widthmul = 0.8;
 var time = performance.now();
 var frametimer = performance.now();
 var frametimes = 0;
@@ -16,10 +14,14 @@ var vfps = 0;
 var frames = 0;
 var clear = true;
 
+
+var heightmul = 0.6;
+var widthmul = 0.6;
 var polerate = 0.5;
 var bounce = 1.1;
 var sped = 1;
 var frick = 1;
+var maxV
 
 class object{
     constructor(){
@@ -57,10 +59,10 @@ class object{
             spot.x = this.x+spot.ox;
             spot.y = this.y+spot.oy;
         }
-        if(Math.abs(this.xs)>100){
+        if(Math.abs(this.xs)>maxV){
             this.xs *=0.05;
         }
-        if(Math.abs(this.ys)>100){
+        if(Math.abs(this.ys)>maxV){
             this.ys *=0.05;
         }
     }
@@ -163,7 +165,7 @@ function draw(){
     }
     ctx.font = "20px Verdana";
     ctx.fillStyle = "rgb(0,0,255,0.8)";
-    ctx.fillText("Frametime: "+Math.round(vframetime), 10, 20);
-    ctx.fillText("Fps: "+Math.round(vfps), 10, 40);
-    ctx.fillText("Things: "+toDraw.length, 10, 60);
+    ctx.fillText("Frametime: "+Math.round(vframetime), 10, 30);
+    ctx.fillText("Fps: "+Math.round(vfps), 10, 50);
+    ctx.fillText("Things: "+toDraw.length, 10, 70);
 }
