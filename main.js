@@ -4,6 +4,7 @@ const path = require("path");
 var jParser = bodyParser.json();
 var app = express();
 
+app.disable('x-powered-by');
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname,"views"));
 app.use(express.json())
