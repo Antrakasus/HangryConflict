@@ -1,23 +1,9 @@
 #can\'t{
-  margin:5%;
-  background: rgb(255,255,255);
-  border-radius: 10%;
   padding: 2%;
+  border-style: solid;
 }
-.click{
-  color:black;
-  font-size:120%;
-  position: absolute;
-  top:35%;
-  left: 32%;
-  background: rgba(0,255,255,0.3);
-  padding: 1%;
-  border-radius: 10%;
-  text-decoration: none;
-}
+
 .main{
-  background: radial-gradient(circle, #0ad 40%, #d00 100%);
-  border-radius: 15%;
   margin:1%;
   width: 70%;
 }
