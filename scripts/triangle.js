@@ -15,7 +15,7 @@ clear = true,
 debug = [];
 
 
-var aspect = 16/9;
+var aspect = screen.width/screen.height;
 var heightmul = 0.9;
 var widthmul = 0.9;
 var polerate = 0.5;

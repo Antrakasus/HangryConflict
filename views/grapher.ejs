@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Yeah, this is big brain time
+        </title>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="/favicon.ico?" />
+        <%- include("../partials/top.ejs") -%>
+    </head>
+    
+    <body onload="load()">
+        <canvas id="can't" style="border: 1px solid #000000;"width="640" height="360"></canvas>
+        <script src="scripts/grapher.js"></script>
+        <div id="ins">
+            <h3>
+                Min:
+                <input type="text" value="1" oninput="click()">
+                <input type="range" min="-100" max="100" value="0" oninput="slide()">
+                <br>
+                Max:
+                <input type="text" value="100" oninput="click()">
+                <input type="range" min="0" max="1000" value="50" oninput="slide()">
+                <br>
+                Step:
+                <input type="text" value="100" oninput="click()">
+                <input type="range" min="1" max="1000" value="1" oninput="slide()">
+                <br>
+                Script
+                <br>
+                <textarea cols="75" rows="20" style="resize:none; width:640px; height:400px;"></textarea>
+            </h3>
+        </div>
+        
+    </body>
+</html>

@@ -1,11 +1,21 @@
-body{
+.top{
     margin:0;
-    text-align:center;
-
+    position: absolute;
+    text-align: center;
 }
 
-a{
-    visibility: visible;
+body{
+    margin:0;
+}
+
+.underlings{
+    visibility: hidden;
     text-decoration: none;
     color:purple;
+}
+
+#drop{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
 }
