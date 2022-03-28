@@ -1,14 +1,28 @@
 var stan ="function fun(x)\n{\nreturn Math.sin(x)\n}";
-var can, ctx, ins, tex, vals, minx, maxx, miny, maxy, step, pars, bod, fun;
-var path;
+var can, ctx, ins, tex, vals, minx, maxx, miny, maxy, step, pars, bod, fun, scale, pres, path, power;
 function load(){
     can = document.getElementById("can't");
     ctx = can.getContext("2d");
-
+    pres = 2;
+    power = 5;
     ins = document.getElementById("ins").children[0].children;
     tex = document.getElementsByTagName("textarea")[0];
     tex.value=stan;
+    compile();
     click();
+}
+
+function logn(val, n){
+    return Math.log(val)/Math.log(n)
+}
+
+function compile(){
+    let inv = invalid();
+    if(inv){
+        alert(inv)
+        return;
+    }
+    graph();
 }
 
 function invalid(){
@@ -55,11 +69,6 @@ function click(){
 
 function graph(){
     ctx.clearRect(0,0,can.width,can.height)
-    let inv = invalid();
-    if(inv){
-        alert(inv)
-        return;
-    }
     minx=parseFloat(ins[0].value);
     maxx=parseFloat(ins[3].value);
     step=parseFloat(ins[6].value);
@@ -76,14 +85,14 @@ function graph(){
     }
     ctx.strokeStyle="#000"
     ctx.stroke(path);
-    path.moveTo(20,mapb(0,miny,maxy,can.height-20,20))
-    path.lineTo(can.width-20,mapb(0,miny,maxy,can.height-20,20))
-    let line = Math.pow(10,Math.floor(Math.log10((maxy-miny)*0.5)))
-    path.moveTo(20,mapb(line,miny,maxy,can.height-20,20))
-    path.lineTo(can.width-20,mapb(line,miny,maxy,can.height-20,20))
+    
     ctx.font = "10px Helvetica";
-    ctx.fillText("0",10,mapb(0,miny,maxy,can.height-20,20))
-    ctx.fillText(line,10,mapb(line,miny,maxy,can.height-20,20))
+    scale = Math.floor(Math.pow(power,Math.floor(logn((maxy-miny),power)))/pres)
+    for(let i = -((maxy-miny)-(maxy-miny)%scale); i<=((maxy-miny)-(maxy-miny)%scale)*2;i+=scale*0.5){
+        path.moveTo(20,mapb(i,miny,maxy,can.height-20,20))
+        path.lineTo(can.width-20,mapb(i,miny,maxy,can.height-20,20))
+        ctx.fillText(i,10,mapb(i,miny,maxy,can.height-20,20))
+    }
     ctx.strokeStyle="#999"
     ctx.stroke(path);
 }
