@@ -13,3 +13,149 @@ function inTriangle (pt, p1, p2, p3)
 {
     return (area(p1,p2,p3)==area(pt,p2,p3)+area(p1,pt,p3)+area(p1,p2,pt));
 }
+
+var widthFill = 0.5;
+var heightFill = 0.5;
+
+var triangleVertices, can, gl, vertexShader, fragmentShader, program, tVBO, posAttribLoc, offAttribLoc, colAttribLoc, poscol, positions;
+
+var vs =
+[
+    "precision mediump float;",
+    "",
+    "attribute vec2 objPosition;",
+    "attribute vec2 offset;",
+    "attribute vec3 vertColor;",
+    "varying vec3 fragColor;",
+    "",
+    "void main()",
+    "{",
+    "fragColor = vertColor;",
+    "gl_Position = vec4(objPosition+offset, 0.0, 1.0);",
+    "}"
+].join("\n");
+
+var fs =
+[
+    "precision mediump float;",
+    "",
+    "varying vec3 fragColor;",
+    "void main()",
+    "{",
+    "gl_FragColor = vec4(fragColor, 0.5);",
+    "}"
+].join("\n");
+
+const floatSize = Float32Array.BYTES_PER_ELEMENT;
+
+
+function attributes(){
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, tVBO);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(
+        posAttribLoc, // Atribute location
+        2, // Number of elements per attribute
+        gl.FLOAT, // Type of elements
+        gl.FALSE, // Is normalised?
+        2*floatSize,// Size of an individual vertex
+        0 // Offset from the begining of a single vertex
+    )
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, poscol);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(
+        offAttribLoc, // Atribute location
+        2, // Number of elements per attribute
+        gl.FLOAT, // Type of elements
+        gl.FALSE, // Is normalised?
+        5*floatSize,// Size of an individual vertex
+        0// Offset from the begining of a single vertex
+    )
+
+    gl.vertexAttribPointer(
+        colAttribLoc, // Atribute location
+        3, // Number of elements per attribute
+        gl.FLOAT, // Type of elements
+        gl.FALSE, // Is normalised?
+        5*floatSize, // Size of an individual vertex
+        2*floatSize // Offset from the begining of a single vertex
+    )
+}
+
+function glload(){
+    can = document.getElementById("can't");
+    gl = can.getContext("webgl");
+
+    if(!gl){
+        alert("Din webläsare kan inte hantera webgls kraft, weakling!");
+        window.stop();
+    }
+    window.onresize = function(){
+        can.width = window.innerWidth* widthFill;
+        can.height = window.innerHeight* heightFill;
+        gl.viewport(0,0,can.width,can.height);
+    }
+
+    can.width = window.innerWidth* widthFill;
+    can.height = window.innerHeight* heightFill;
+    gl.viewport(0,0,can.width,can.height);
+    gl.clearColor(1.0,1.0,1.0,1.0);
+    
+    vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    
+    gl.shaderSource(vertexShader, vs);
+    gl.shaderSource(fragmentShader, fs);
+    
+    gl.compileShader(vertexShader);
+    if(!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)){
+        console.error("ERROR compiling vertex shader!", gl.getShaderInfoLog(vertexShader));
+        return;
+    }
+    gl.compileShader(fragmentShader);
+    if(!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)){
+        console.error("ERROR compiling fragment shader!", gl.getShaderInfoLog(fragmentShader));
+        return;
+    }
+
+    program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if(!gl.getProgramParameter(program, gl.LINK_STATUS)){
+        console.error("Error linking program!", gl.getProgramInfoLog(program));
+        return;
+    }
+    gl.validateProgram(program);
+    if(!gl.getProgramParameter(program,gl.VALIDATE_STATUS)){
+        console.error("Error validating program", gl.getProgramInfoLog(program));
+        return;
+    }
+
+    triangleVertices = [0.1,0.0,0.2,0.2,0.0,0.2];
+    positions = [0.2,0.5,1.0,0.0,0.5,0.2,0.5,1.0,0.0,0.5,0.2,0.5,1.0,0.0,0.5];
+
+
+    tVBO = gl.createBuffer();
+    poscol = gl.createBuffer();
+
+    posAttribLoc = gl.getAttribLocation(program, "objPosition");
+    offAttribLoc = gl.getAttribLocation(program, "offset");
+    colAttribLoc = gl.getAttribLocation(program, "vertColor");
+
+    attributes();
+
+    gl.enableVertexAttribArray(posAttribLoc);
+    gl.enableVertexAttribArray(colAttribLoc);
+
+    gl.useProgram(program);
+}
+
+function draw(){
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    attributes();
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    window.requestAnimationFrame(draw);
+}

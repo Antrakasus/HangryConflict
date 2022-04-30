@@ -1,3 +1,6 @@
+all
+start
+<link rel="shortcut icon" href="/favicon.ico?"></link>
 <link rel="stylesheet" href="/swags/top.css">
 <div class="top"style="display:inline-block; height: 80px; width: 100%; position: relative; background-color: rgb(100, 160, 250);">
     <h1 style="font: 50px Verdana; margin:0;color:rgb(0,0,0,0.5);">Angyman</h1>
@@ -14,3 +17,4 @@
     <script src="/scripts/top.js"></script>
     <script src="/scripts/tools.js"></script>
 </div>
+end
