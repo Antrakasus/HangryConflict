@@ -44,28 +44,18 @@ function angy(req, res, next){
                 });
                 res.setHeader("Content-type","text/html");
                 res.send(defaults(out));
-            }else if(path=="/"){path = "/index";}
-                out = fs.readFileSync(dir+"/views"+path+".ejs","utf-8",function(err,data){
-                    if(err){
-                        return fs.readFileSync(dir+"/views/err.ejs");
-                    }else{
-                        return data;
-                    }
-                })
-            /*
-            switch(path.split(".")[path.split(".").length-1]){
-                case "ejs":
+            }else {
+                if(path=="/"){path = "/index";}
+                    out = fs.readFileSync(dir+"/views"+path+".ejs","utf-8",function(err,data){
+                        if(err){
+                            return fs.readFileSync(dir+"/views/err.ejs");
+                        }else{
+                            return data;
+                        }
+                    })
                     res.setHeader("Content-type","text/html");
-                    break;
-                case "css":
-                    res.setHeader("Content-type","text/css");
-                    break;
-                case "js":
-                    res.setHeader("Content-type","text/javascript");
-                    break;
-            }*/
-            res.setHeader("Content-type","text/html");
-            res.send(defaults(out));
+                res.send(defaults(out));
+                }
         }else{
             if(path=="favicon.ico"){
                 res.sendFile("favicon.ico");
