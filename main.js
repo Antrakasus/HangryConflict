@@ -10,7 +10,6 @@ var def =fs.readFileSync(dir+"/defaults.txt","utf-8",function(err,data){return d
 def = def.split(/(start|end)/);
 var gams =fs.readFileSync(dir+"/game.txt","utf-8",function(err,data){return data;});
 gams = gams.replace(/\r?\n/g,"/").split("/");
-console.log(gams)
 var all = def[def.indexOf("all")+3];
 app.disable('x-powered-by');
 app.set("view engine", "ejs");
