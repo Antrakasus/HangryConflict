@@ -1,5 +1,5 @@
 var stan ="function fun(x)\n{\nreturn Math.sin(x)\n}";
-var can, ctx, ins, tex, vals, minx, maxx, miny, maxy, step, pars, bod, fun, scale, pres, path, power;
+var can, ctx, ins, tex, vals, minx, maxx, miny, maxy, step, pars, bod, fun, scale, pres, path, power, playing, ac, buffer, gain, cd, sauce, pGainC, volume, pitch, segtime;
 function load(){
     can = document.getElementById("can't");
     ctx = can.getContext("2d");
@@ -8,8 +8,19 @@ function load(){
     ins = document.getElementById("ins").children[0].children;
     tex = document.getElementsByTagName("textarea")[0];
     tex.value=stan;
+    volume=ins[9].value;
+    pitch=ins[12].value;
+    segtime=ins[15].value/1000;
+    ac = new AudioContext();
+    buffer = ac.createBuffer(1,ac.sampleRate*segtime,ac.sampleRate);
+    cd = buffer.getChannelData(0);
+    sauce = ac.createBufferSource();
+    sauce.loop=true;
+    sauce.buffer=buffer;
+    pGainC = ac.createGain();
+    pGainC.connect(ac.destination);
     compile();
-    click();
+    genSound();
 }
 
 function logn(val, n){
@@ -25,6 +36,37 @@ function compile(){
     graph();
 }
 
+function genSound(){
+    volume=ins[9].value;
+    pitch=ins[12].value;
+    segtime=ins[15].value/1000;
+    for(let i=0;i<buffer.length*step;i++){
+        //cd[i]=fun(i/pitch/step)
+        cd[i]=Math.random()*2-1
+    }
+    
+} 
+
+function play(){
+    if(playing){
+        playing=false;
+        ins[18].textContent="Play";
+        sauce.stop();
+    }else{
+        sauce = ac.createBufferSource();
+        sauce.loop=true;
+        sauce.buffer=buffer;
+        sauce.connect(pGainC);
+        pGainC = ac.createGain();
+        pGainC.connect(ac.destination);
+        pGainC.gain.setValueAtTime(volume/1000,0);
+        playing=true;
+        ins[15].textContent="Stop";
+        sauce.start();
+    }
+    
+}
+
 function invalid(){
     let cont = tex.value;
     bl.forEach(element => {
@@ -32,7 +74,7 @@ function invalid(){
             return "Stahp XSS";
         }
     });
-    if(cont.substr(0,13)!="function fun("){
+    if(!cont.includes("function fun(")){
         return "Fix code";
     }
     pars=cont.substr(13, cont.indexOf(")")-13).split(", ");
@@ -57,14 +99,22 @@ function slide(){
     ins[0].value=ins[1].value;
     ins[3].value=ins[4].value;
     ins[6].value=ins[7].value;
+    ins[9].value=ins[10].value;
+    ins[12].value=ins[13].value;
+    ins[15].value=ins[16].value;
     graph();
+    genSound()
 }
 
 function click(){
     ins[1].value=ins[0].value;
     ins[4].value=ins[3].value;
     ins[7].value=ins[6].value;
+    ins[10].value=ins[9].value;
+    ins[13].value=ins[12].value;
+    ins[16].value=ins[15].value;
     graph();
+    genSound()
 }
 
 function graph(){
